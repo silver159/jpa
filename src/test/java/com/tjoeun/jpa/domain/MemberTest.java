@@ -34,5 +34,4 @@ class MemberTest {
 		Member member4 = Member.builder().name("일지매").email("d@d.com").build(); // 생성자가 있어야 생성
 		System.out.println("member4: "+ member4);
 	}
-
 }

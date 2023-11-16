@@ -44,8 +44,8 @@ public class Member {
 	private String name;
 	@NonNull
 	private String email;
+	@Column // 없어도 가능
 	private LocalDateTime createAt;
 	private LocalDateTime updateAt;
-	
 	
 }
