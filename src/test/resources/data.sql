@@ -9,4 +9,4 @@ INSERT INTO member(id, name, email, create_at, update_at) VALUES (4, '일지매'
 call next value for hibernate_sequence;
 INSERT INTO member(id, name, email, create_at, update_at) VALUES (5, '홍길동', 'gildong@tjoeun.com', now(), now());
 call next value for hibernate_sequence;
-INSERT INTO member(id, name, email, create_at, update_at) VALUES (6, '홍길동', 'honghong@tjoeun.com', now(), now());
+INSERT INTO member(id, name, email, create_at, update_at) VALUES (6, '홍길동', 'hong@tjoeun.com', now(), now());

@@ -1,7 +1,10 @@
 package com.tjoeun.jpa.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -44,6 +47,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	// Last는 없다.
 	// 메소드 명명 규칙: findFirst숫자By필드명, findTop숫자By필드명
 	// First, Top 뒤에 limit에 사용할 숫자를 지정한다.
+	// 한개만 가져올때는 1 쓸 필요 없다.
 	List<Member> findFirst1ByName(String name);
 	List<Member> findTop2ByName(String name);
 	
@@ -52,36 +56,86 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	// 메소드와 같은 기능이 실행된다.
 	List<Member> findLast1ByName(String name);
 	
+	// 11/17
 	// and, or 조건
-	
-	
+	// 메소드 명명 규칙: findBy필드명And필드명, findBy필드명Or필드명
+	List<Member> findByNameAndEmail(String name, String email);
+	List<Member> findByEmailAndName(String email, String name);
+	List<Member> findByNameOrEmail(String name, String email);
+	List<Member> findByEmailOrName(String email, String name);
 	
 	// after(초과), before(미만) 조건
-	
-	
+	// 메소드 명명 규칙: findBy필드명After, findBy필드명Before
+	List<Member> findByCreateAtAfter(LocalDateTime date); // 날짜 초과
+	List<Member> findByCreateAtBefore(LocalDateTime date); // 날짜 미만
+	// 메소드 명명 규칙: findBy필드명GreaterThan, findBy필드명LessThan
+	List<Member> findByIdGreaterThan(Long id); // id 초과
+	List<Member> findByIdLessThan(Long id); // id 미만
 	
 	// 이상, 이하 조건
+	// 메소드 명명 규칙: findBy필드명GreaterThanEqual, findBy필드명LessThanEqual
+	List<Member> findByIdGreaterThanEqual(Long id); // id 이상
+	List<Member> findByIdLessThanEqual(Long id); // id 이하
 	
+	// 복합 조건
+	List<Member> findByIdGreaterThanEqualAndIdLessThanEqual(Long start, Long end); // start 이상 이고 end 이하
+	List<Member> findByIdGreaterThanEqualAndIdLessThan(Long start, Long end); // start 이상 이고 end 미만
+	List<Member> findByIdGreaterThanAndIdLessThanEqual(Long start, Long end); // start 초과 이고 end 이하
+	List<Member> findByIdGreaterThanAndIdLessThan(Long start, Long end); // start 초과 이고 end 미만
 	
-	
-	// between 조건
-	
-	
+	// between 조건 => ~ 이상이고(And) ~ 이하인
+	// 메소드 명명 규칙: findBy필드명Between
+	List<Member> findByIdBetween(Long start, Long end); // between
 	
 	// null값 조회
-	
+	// 메소드 명명 규칙: findBy필드명IsNull, findBy필드명IsNotNull
+	List<Member> findByNameIsNull(); // name 필드에 저장된 값이 null인가?
+	List<Member> findByEmailIsNotNull(); // email 필드에 저장된 값이 null이 아닌가?
+	// findBy필드명IsEmpty, findBy필드명IsNotEmpty는 collection(arraylist, hashmap 등)이
+	// 비어있나 비어있지 않나 비교한다.
 	
 	
 	// in, not in
+	// 메소드 명명 규칙: findBy필드명In, findBy필드명NotIn
+	List<Member> findByNameIn(List<String> name);
+	List<Member> findByemailNotIn(List<String> email);
 	
-	
-	
-	// like
-	
-	
+	// like => 부분일치 => ~로 시작하는, ~로 끝나는, ~를 포함하는
+	// 메소드 명명 규칙: findBy필드명Like
+	List<Member> findByNameLike(String name);
+	// like를 사용하면 "%"와 연결하는 과정에서 가독성을 해칠 수 있다.
+	// %를 사용하지 않는다.
+	List<Member> findByNameStartingWith(String name); // ~로 시작하는
+	List<Member> findByNameEndingWith(String name); // ~로 끝나는
+	List<Member> findByNameContains(String name); // ~를 포함하는
 	
 	// 정렬
+	// 메소드 명명 규칙: findBy필드명OrderBy정렬할필드명Asc/Desc
+	List<Member> findByNameOrderByEmailAsc(String name);
+	List<Member> findByNameOrderByIdDesc(String name);
 	
+	// Top, First를 이용해서 1개만 얻어오려면 Top, First 뒤에 숫자는 생략 가능하다. 
+	List<Member> findTopByNameOrderByIdAsc(String name); // id가 제일 작은 데이터 1개
+	List<Member> findFirstByNameOrderByIdAsc(String name); // id가 제일 작은 데이터 1개
+	List<Member> findTopByNameOrderByIdDesc(String name); // id가 제일 큰 데이터 1개
+	List<Member> findFirstByNameOrderByIdDesc(String name); // id가 제일 큰 데이터 1개
 	
+	// 특정 조건을 지정하고 않고 전체 데이터를 정렬해서 얻어오려면 findAll을 사용하면 된다.
+//	List<Member> findAllOrderByIdDesc(); // 에러, findAll(Sort.by(정렬기준, 필드이름))  
+	List<Member> findAllByOrderByIdDesc();
+	List<Member> findTop3AllByOrderByIdDesc();
+	
+	// data.sql 변경
+	// 이름이 같으면 이메일의 내림차순으로 정렬
+	List<Member> findByNameOrderByEmailDesc(String name);
+	// 이름이 같으면 이메일의 내림차순으로 정렬, 이메일도 같으면 id의 내림차순 정렬
+	List<Member> findByNameOrderByEmailDescIdDesc(String name);
+	
+	// Sort 객체를 사용해도 같은 효과를 낼 수 있다.
+	List<Member> findTop3ByName(String name, Sort sort);
+	
+	// 페이징
+	// import org.springframework.data.domain.Pageable;
+	Page<Member> findByName(String name, Pageable pageable);
 	
 }
