@@ -2,11 +2,13 @@ package com.tjoeun.jpa.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.tjoeun.jpa.domain.Member;
 
@@ -138,4 +140,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	// import org.springframework.data.domain.Pageable;
 	Page<Member> findByName(String name, Pageable pageable);
 	
+	// 11/20
+	// 네이티브 쿼리
+	@Query(value = "select * from member limit 1;", nativeQuery = true)
+	Map<String, Object> findRawRecord();
 }

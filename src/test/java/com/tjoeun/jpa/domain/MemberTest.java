@@ -23,8 +23,9 @@ class MemberTest {
 		System.out.println("member: "+ member);
 		log.info("member: {}", member); // 문자열만 가능
 		
-		Member member2 = new Member(1L, "임꺽정", "b@b.com", LocalDateTime.now(), LocalDateTime.now());
-		System.out.println("member2: "+ member2);
+		
+//		Member member2 = new Member(1L, "임꺽정", "b@b.com", LocalDateTime.now(), LocalDateTime.now());
+//		System.out.println("member2: "+ member2);
 		Member member3 = new Member("장길산", "c@c.com");
 		System.out.println("member3: "+ member3);
 		

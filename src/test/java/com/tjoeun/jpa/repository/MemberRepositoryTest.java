@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tjoeun.jpa.domain.Gender;
 import com.tjoeun.jpa.domain.Member;
 
 // @SpringBootTest 어노테이션을 붙여서 테스트 클래스임을 springBoot에게 알려준다.
@@ -265,8 +269,8 @@ class MemberRepositoryTest {
 		// import org.springframework.data.domain.Sort.Order;
 //		List<Member> members = memberRepository.
 //				findTop3ByName("홍길동", Sort.by(Order.desc("email"), Order.desc("id"))); 
-		List<Member> members = memberRepository.findAll(getSort()); 
-		members.forEach(System.out::println);
+//		List<Member> members = memberRepository.findAll(getSort()); 
+//		members.forEach(System.out::println);
 		
 	}
 	// 정렬 기준이 지정된 Sort 객체를 리턴하는 메소드
@@ -318,5 +322,97 @@ class MemberRepositoryTest {
 		// 리턴된다.
 //		System.out.println(pages.previousOrFirstPageable());
 		
+	}
+	
+	// 11/20
+	@Test
+	@Transactional
+	public void insertAndUpdateTest() {
+		
+		Member member = new Member("홍길동", "hoooong@tjoeun.com");
+		memberRepository.save(member); // insert
+		
+		member = memberRepository.findById(1L).orElseThrow(RuntimeException::new);
+		member.setName("임꺽ㄱㄱㄱㄱㄱㄱㄱㄱㄱ정");
+		memberRepository.save(member); // update
+		
+		List<Member> members = memberRepository.findAll(getSort()); 
+		members.forEach(System.out::println);
+	}
+	
+	@Test
+	@Transactional
+	public void enumTest() {
+		Member member = memberRepository.findById(1L).orElseThrow(RuntimeException::new);
+		member.setGender(Gender.MALE);
+		memberRepository.save(member); // update
+		
+		List<Member> members = memberRepository.findAll(); 
+		members.forEach(System.out::println);
+		
+		System.out.println(memberRepository.findRawRecord().get("gender"));
+	}
+	
+	@Test
+	@Transactional
+	public void listernertest() {
+		
+		Member member = new Member("홍길동", "hoooong@tjoeun.com");
+		memberRepository.save(member); // insert
+		
+		member = memberRepository.findById(1L).orElseThrow(RuntimeException::new);
+		member.setName("임꺽ㄱㄱㄱㄱㄱㄱㄱㄱㄱ정");
+		memberRepository.save(member); // update
+		
+		memberRepository.deleteById(2L); // delete
+		
+		List<Member> members = memberRepository.findAll(); 
+		members.forEach(System.out::println);
+	}
+	
+	@Test
+	@Transactional
+	public void prePersistTest() {
+		
+		Member member = new Member();
+		member.setName("홍길동");
+		member.setEmail("honghong@tjoeun.com");
+		// 최초 저장 시간이나 수정 시간을 Entity가 저장되거나 수정되는 시점에서 코딩을 하면
+		// 사소한 실수를 유발할 수 있다.
+		// 이 문제를 해결하기 위해 @PrePersist나 @PreUpdate 메소드에서 처리하는 것을 권장한다.
+		// Member.java로 옴긴다.
+//		member.setCreateAt(LocalDateTime.now()); // 최초로 저장되는 시간
+//		member.setUpdateAt(LocalDateTime.now()); // 수정되는 시간
+		memberRepository.save(member); // insert
+		
+		List<Member> members = memberRepository.findAll(); 
+		members.forEach(System.out::println);
+	}
+	
+	@Test
+	@Transactional
+	public void preUpdateTest() {
+		
+		Member member = memberRepository.findById(1L).orElseThrow(RuntimeException::new);
+		System.out.println("수정전: " + member);
+		member.setName("임꺽ㄱㄱㄱㄱㄱㄱㄱㄱㄱ정");
+//		member.setUpdateAt(LocalDateTime.now()); // 수정되는 시간
+		memberRepository.save(member); // update
+		System.out.println("수정후: " + memberRepository.findAll().get(0));
+		System.out.println("수정후: " + memberRepository.findById(1L).orElseThrow(RuntimeException::new));
+		
+	}
+	
+	// 5교시
+	@Test
+	@Transactional
+	public void memberHistoryTest() {
+		
+		Member member = new Member();
+		member.setName("손오공");
+		member.setEmail("son@tjoeun.com");
+		memberRepository.save(member); // insert
+		
+		memberRepository.findAll().forEach(System.out::println);
 	}
 }
