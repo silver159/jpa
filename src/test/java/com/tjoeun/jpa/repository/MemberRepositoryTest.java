@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tjoeun.jpa.domain.Gender;
@@ -31,6 +32,9 @@ class MemberRepositoryTest {
 
 	@Autowired
 	private MemberRepository memberRepository;
+	
+	@Autowired
+	private MemberHistoryRepository memberHistoryRepository;
 	
 	@Test
 	@Transactional 
@@ -400,10 +404,8 @@ class MemberRepositoryTest {
 		memberRepository.save(member); // update
 		System.out.println("수정후: " + memberRepository.findAll().get(0));
 		System.out.println("수정후: " + memberRepository.findById(1L).orElseThrow(RuntimeException::new));
-		
 	}
 	
-	// 5교시
 	@Test
 	@Transactional
 	public void memberHistoryTest() {
@@ -413,6 +415,10 @@ class MemberRepositoryTest {
 		member.setEmail("son@tjoeun.com");
 		memberRepository.save(member); // insert
 		
+		member.setName("저팔계");
+		member.setEmail("jeo@tjoeun.com");
+		memberRepository.save(member); // update
 		memberRepository.findAll().forEach(System.out::println);
+		memberHistoryRepository.findAll().forEach(System.out::println);
 	}
 }

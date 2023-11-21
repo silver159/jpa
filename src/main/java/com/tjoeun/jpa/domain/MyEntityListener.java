@@ -15,7 +15,8 @@ public class MyEntityListener {
 	public void prePersist(Object o) {
 		System.out.println("MyEntityListener의 prePersist() 메소드");
 		System.out.println(o.getClass().getName());
-		
+		// 메소드의 인수로 넘어온 객체가 Auditable 인터페이스로 정상적으로 형변환이 된다면
+		// MyEntityListener를 사용하는 클래스이므로 작성일과 수정일을 저장한다.
 		if(o instanceof Auditable) { // 상속 받은 모든 클래스나 인터페이스는 upcast 가능
 			((Auditable) o).setCreateAt(LocalDateTime.now());
 			((Auditable) o).setUpdateAt(LocalDateTime.now());

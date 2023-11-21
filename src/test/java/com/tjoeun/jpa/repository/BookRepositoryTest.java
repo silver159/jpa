@@ -20,7 +20,7 @@ class BookRepositoryTest {
 	public void bookTest() {
 		
 		Book book = new Book();
-		book.setName("간지나는 springBoot 책");
+		book.setTitle("간지나는 springBoot 책");
 		book.setAuthor("홍길동");
 //		book.setCreateAt(LocalDateTime.now());
 //		book.setUpdateAt(LocalDateTime.now());

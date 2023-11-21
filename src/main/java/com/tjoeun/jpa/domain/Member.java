@@ -1,8 +1,5 @@
 package com.tjoeun.jpa.domain;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -10,27 +7,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.PostLoad;
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor // 기본 생성자 자동완성, 필수
 @AllArgsConstructor // 모든 멤버를 초기화하는 생성자 자동완성
@@ -62,8 +47,15 @@ import lombok.Setter;
 // Member Entity에서 데이터 입력 또는 수정이 발생되면 MemberHistory Entity에 저장을 해야하므로
 // MemberHistoryListener를 추가한다.
 // 2개 이상의 Listener를 사용하려면 {}에 묶어서 ","로 구분해서 나열하면 된다.
-@EntityListeners(value = {MyEntityListener.class, MemberHistoryListener.class})
-public class Member implements Auditable{
+// @EntityListeners(value = {MyEntityListener.class, MemberHistoryListener.class})
+// @EntityListeners(value = {AuditingEntityListener.class, MemberHistoryListener.class})
+@EntityListeners(value = MemberHistoryListener.class)
+// 부모 클래스로 부터 상속받은 toString(), hashCode(), equals() 메소드를 자식 클래스에서
+// 사용하려면 @ToString, @EqualsAndHashCode 어노테이션의 callSuper 속성값을 true로 지정하면
+// 된다.
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class Member extends BaseEntity{
 	
 	// @Entity 어노테이션을 붙여서 테이블로 생성하려는 경우 반드시 기본키 필드를 설정해야 한다.
 	@Id // 기본키로 사용할 필드는 @Id 어노테이션을 붙여서 선언한다.
@@ -78,7 +70,7 @@ public class Member implements Auditable{
 	// 모든 테이블이 같이 id가 증가하게 하려면 GenerationType.SEQUENCE로 지정한다.
 	// 모든 테이블이 독립적으로 id가 증가하게 하려면 GenerationType.IDENTITY로 지정한다.
 //	@GeneratedValue // 기본키 필드에 저장되는 값 자동증가, AUTO
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id; // 기본키 필드의 데이터 타입은 Long으로 설정한다.
 	
 	@NonNull
@@ -101,12 +93,14 @@ public class Member implements Auditable{
 //	private int repleCount;
 	
 	// update sql 명령 실행시 제외시킨다.
-	@Column(updatable = false)
-	private LocalDateTime createAt;
+//	@Column(updatable = false)
+//	@CreatedDate
+//	private LocalDateTime createAt;
 	
 	// insert sql 명령 실행시 제외시킨다.
-	@Column(insertable = false)
-	private LocalDateTime updateAt;
+//	@Column(insertable = false)
+//	@LastModifiedDate
+//	private LocalDateTime updateAt;
 	
 	// enum을 사용할 때 기본값이 ORDINAL로 지정되어 있기 때문에 enum 파일에서 정의한 순서대로
 	// 인덱스가 부여되므로 코딩과정에서 enum 파일의 순서가 변경되면 인덱스도 같이 변경되는
