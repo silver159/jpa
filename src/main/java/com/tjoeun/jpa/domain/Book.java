@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,8 +35,9 @@ public class Book extends BaseEntity{
 //	@OneToOne
 	// mappedBy 옵션을 아래와 같이 지정하면 Book Entity에서는 참조키(book_review_info_id)를
 	// 가지지 않는다.
-//	@OneToOne(mappedBy = "book")
-//	private BookReviewInfo bookReviewInfo;
+	@OneToOne(mappedBy = "book")
+	@ToString.Exclude // toString() 메소드를 제외한다.
+	private BookReviewInfo bookReviewInfo;
 	
 //	private String author; // 다른 테이블에서 가져옴
 	

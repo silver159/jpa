@@ -36,7 +36,9 @@ class BookReviewInfoRepositoryTest {
 	}
 	
 	@Test
-	@Transactional
+//	@Transactional // join을 넣어주려면 @Transactional을 주석 처리한다.
+	// 양쪽에 foreign key 넣으려면 @Transactional을 주석 처리한다.
+	// 한쪽에만 foreign key 넣어준다.
 	public void crudTest2() {
 		
 		// 책 정보 저장
@@ -76,10 +78,10 @@ class BookReviewInfoRepositoryTest {
 		System.out.println("result: " + result);
 		
 		// JPA에서 수행하는 방식 - Book 정보에서 BookReviewInfo 정보를 가져온다.
-//		System.out.println(bookRepository.findById(1L).orElseThrow(RuntimeException::new));
-//		System.out.println(bookRepository.findById(1L).orElseThrow(RuntimeException::new).getBookReviewInfo());
-//		BookReviewInfo result2 = bookRepository.findById(1L).orElseThrow(RuntimeException::new).getBookReviewInfo();
-//		System.out.println("result2: " + result2);
+		System.out.println(bookRepository.findById(1L).orElseThrow(RuntimeException::new));
+		System.out.println(bookRepository.findById(1L).orElseThrow(RuntimeException::new).getBookReviewInfo());
+		BookReviewInfo result2 = bookRepository.findById(1L).orElseThrow(RuntimeException::new).getBookReviewInfo();
+		System.out.println("result2: " + result2);
 		
 		/*
 		 * 내가 생각 한 방법
