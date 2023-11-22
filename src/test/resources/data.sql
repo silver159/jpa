@@ -1,3 +1,5 @@
+-- 주석은 GenerationType.auto, SEQUENCE 주석 아닌 것은 IDENTITY
+
 --call next value for hibernate_sequence;
 --INSERT INTO member(id, name, email, create_at, update_at) VALUES (1, '홍길동', 'hong@tjoeun.com', now(), now());
 INSERT INTO member(name, email, create_at, update_at) VALUES ('홍길동', 'hong@tjoeun.com', now(), now());

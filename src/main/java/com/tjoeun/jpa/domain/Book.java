@@ -26,7 +26,18 @@ public class Book extends BaseEntity{
 	private Long id;
 	
 	private String title;
-	private String author;
+	private String category;
+	private Long authorId;
+	private Long publisherId;
+	
+	// 1:1 연관 관계 설정해서 BookReviewInfo Entity를 직접 참조하게 한다.
+//	@OneToOne
+	// mappedBy 옵션을 아래와 같이 지정하면 Book Entity에서는 참조키(book_review_info_id)를
+	// 가지지 않는다.
+//	@OneToOne(mappedBy = "book")
+//	private BookReviewInfo bookReviewInfo;
+	
+//	private String author; // 다른 테이블에서 가져옴
 	
 //	@CreatedDate
 //	private LocalDateTime createAt;
