@@ -1,12 +1,19 @@
 package com.tjoeun.jpa.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -109,6 +116,30 @@ public class Member extends BaseEntity{
 	// 순서가 변경되더라도 인덱스가 아닌 문자열로 처리되므로 오류가 발생될 가능성이 낮아진다.
 	@Enumerated(value = EnumType.STRING)
 	private Gender gender;
+	
+	// 11/23
+	// Member Entity와 MemberHistory Entity의 1:N 연관 관계를 설정한다.
+//	@OneToMany // fetch 속성의 기본값이 LAZY(지연 로딩), LazyInitializationException
+	// (지연 초기화 오류)가 발생된다.
+	// LazyInitializationException는 실행할 메소드에 @Transactional 어노테이션을 붙여주거나
+	// @OneToMany 어노테이션의 fetch 속성값을 FetchType.EAGER(즉시로딩)을 지정하면 해결할 
+	// 수 있다.
+	@OneToMany(fetch=FetchType.EAGER)
+	// 1:N 또는 N:1 관계는 중간 테이블이 생성되면 안되기 때문에 @JoinColumn 어노테이션으로 
+	// Entity가 어떤 컬럼으로 join을 하게 될지 지정한다.
+	// Entity가 어떤 컬럼으로 join을 하게될지 지정한다.
+	// name 속성값을 member_id로 지정해서 member_history 테이블의 member_id 필드와 조인됨을
+	// 지정한다.
+	// Member Entity에만 @JoinColumn 어노테이션을 지정하면 member_history 논리적 컬럼 이름이
+	// member_id와 memberId가 존재하므로 어떤것을 사용할 지 지정하지 않아서 오류가 발생된다.
+	// MemberHistory Entity에 @JoinColumn 어노테이션에 지정한 컬럼 이름과 join될 컬럼 이름을
+	// @Column 어노테이션으로 지정하면 된다.
+	@JoinColumn(name = "member_id")
+	@ToString.Exclude
+	// Member Entity와 관련된 Memberhistory Entity는 N개 이기 때문에 collection 타입으로 
+	// 선언한다.
+	private List<MemberHistory> memberHistories = new ArrayList<MemberHistory>();
+	
 	
 	// JPA에서 제공하는 Entity Listener는 7가지가 있다. pre, post
 //	@PrePersist // Entity가 영속화(Persist, insert)되기 전에 실행된다.

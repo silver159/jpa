@@ -33,7 +33,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	
 	// 접두어만 다르게 사용해서 같은 기능이 실행되는 메소드들을 만들어 사용할 수 있다.
 	// 여러 접두어를 사용할 수 있지만 find를 사용하자.
-	List<Member> findByEmail(String email);
+//	List<Member> findByEmail(String email);
+	Member findByEmail(String email);
 	List<Member> getByEmail(String email);
 	List<Member> readByEmail(String email);
 	List<Member> queryByEmail(String email);

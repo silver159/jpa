@@ -1,5 +1,6 @@
 package com.tjoeun.jpa.domain;
 
+import javax.persistence.ManyToOne;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 
@@ -46,6 +47,11 @@ public class MemberHistoryListener {
 		memberHistory.setName(member.getName());
 		memberHistory.setEmail(member.getEmail());
 		memberHistoryRepository.save(memberHistory);
+		
+		// @ManyToOne 연관 관계를 설정하기 위해 추가한 MemberHistory Entity 객체에  Member Entity 
+		// 객체를 넣어준다.
+		memberHistory.setMember(member);
+		
 		System.out.println(memberHistory);	
 	}
 	

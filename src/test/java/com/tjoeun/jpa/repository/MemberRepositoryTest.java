@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tjoeun.jpa.domain.Gender;
 import com.tjoeun.jpa.domain.Member;
+import com.tjoeun.jpa.domain.MemberHistory;
 
 // @SpringBootTest 어노테이션을 붙여서 테스트 클래스임을 springBoot에게 알려준다.
 @SpringBootTest
@@ -421,4 +422,61 @@ class MemberRepositoryTest {
 		memberRepository.findAll().forEach(System.out::println);
 		memberHistoryRepository.findAll().forEach(System.out::println);
 	}
+	
+	// Member Entity에 데이터가 입력되면 MemberHistory Entity에 자동으로 입력되나 확인한다.
+	@Test
+//	@Transactional
+	public void memberRelationTest() {
+		
+		Member member = new Member();
+		member.setName("손오공");
+		member.setEmail("son@tjoeun.com");
+		member.setGender(Gender.MALE);
+		memberRepository.save(member); // insert
+		
+		member.setName("저팔계");
+		memberRepository.save(member); // update
+		member.setEmail("jeo@tjoeun.com");
+		memberRepository.save(member); // update
+		
+		Member member2 = new Member();
+		member2.setName("사오정");
+		member2.setEmail("sa@tjoeun.com");
+		member2.setGender(Gender.MALE);
+		memberRepository.save(member2); // insert
+		
+		List<Member> members = memberRepository.findAll();
+		members.forEach(System.out::println);
+		System.out.println("memberRepository.findAll() =====================================================================");
+		
+		memberHistoryRepository.findAll().forEach(System.out::println);
+		System.out.println("memberHistoryRepository.findAll() ==============================================================");
+		
+		// memberHistory Entity에 아주 많은 데이터가 쌓여있다면 findAll() 메소드를 사용해서 
+		// 전체 데이터를 가져오기 보다는 memberHistoryRepository에 memberId를 특정하여 
+		// findByMemberId() 메소드를 생성해서 데이터를 가져와야 할 것이다.
+		
+//		System.out.println(memberRepository.findByName("저팔계").get(0).getId());
+		List<MemberHistory> results = memberHistoryRepository.findByMemberId(
+//			memberRepository.findByName("사오정").get(0).getId()
+			memberRepository.findByEmail("jeo@tjoeun.com").getId()
+		);
+		results.forEach(System.out::println);
+		System.out.println("results ==============================================================");
+		
+		// Member Entity와 MemberHistory Entity의 1:N 연관 관계를 설정하면 Member에서
+		// MemberHistory를 가져올 수 있다.
+		List<MemberHistory> results2 = memberRepository.findByEmail("sa@tjoeun.com").getMemberHistories();
+		results2.forEach(System.out::println);
+		System.out.println("results2 ============================================================================================================");
+		
+		// MemberHistory Entity와 Member Entity의 N:1 연관 관계를 설정하면 MemberHistory에서
+		// Member를 가져올 수 있다.
+//		Member result = memberHistoryRepository.findAll().get(0);
+		System.out.println(memberHistoryRepository.findAll().get(0).getMember());
+		System.out.println("result ============================================================================================================");
+		
+	}
+	
 }
+
